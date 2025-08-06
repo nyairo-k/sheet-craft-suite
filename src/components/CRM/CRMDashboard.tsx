@@ -190,11 +190,12 @@ export function CRMDashboard({ clients, quotations, onClientCreate, onClientUpda
               <CardContent>
                 <div className="space-y-2">
                   {Object.entries(
-                    clients.reduce((acc, client) => {
-                      acc[client.industry] = (acc[client.industry] || 0) + 1;
+                    clients.reduce((acc: Record<string, number>, client) => {
+                      const industry = client.industry || "Other";
+                      acc[industry] = (acc[industry] || 0) + 1;
                       return acc;
                     }, {} as Record<string, number>)
-                  ).map(([industry, count]) => (
+                  ).map(([industry, count]: [string, number]) => (
                     <div key={industry} className="flex items-center justify-between">
                       <span className="text-sm">{industry}</span>
                       <span className="text-sm font-medium">{count}</span>
