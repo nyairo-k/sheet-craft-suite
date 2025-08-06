@@ -1,130 +1,165 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Users, FileText, Package, DollarSign, ClipboardList, TrendingUp } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Users, FileText, Package, DollarSign, ClipboardList, TrendingUp, Building2 } from "lucide-react";
+import { CRMDashboard } from "@/components/CRM/CRMDashboard";
+import { MainDashboard } from "@/components/Dashboard/MainDashboard";
+import { Sidebar } from "@/components/Layout/Sidebar";
 
-// Simplified Index page with working components
 const Index = () => {
   const [activeSection, setActiveSection] = useState("dashboard");
+  const [userRole, setUserRole] = useState("admin");
+  
+  // Sample data for demo
+  const [clients, setClients] = useState([
+    {
+      id: "CL001",
+      companyName: "Nairobi Medical Center",
+      contactPerson: "Dr. Sarah Kimani",
+      email: "sarah@nmc.co.ke",
+      phone: "+254722123456",
+      address: "Kilimani, Nairobi",
+      industry: "Healthcare",
+      status: "Active",
+      createdAt: "2024-01-15T10:00:00Z"
+    },
+    {
+      id: "CL002", 
+      companyName: "Mombasa General Hospital",
+      contactPerson: "Dr. Ahmed Hassan",
+      email: "ahmed@mgh.co.ke",
+      phone: "+254733987654",
+      address: "Nyali, Mombasa",
+      industry: "Healthcare",
+      status: "Active",
+      createdAt: "2024-02-01T14:30:00Z"
+    }
+  ]);
+
+  const [quotations, setQuotations] = useState([
+    {
+      id: "Q001",
+      clientId: "CL001",
+      totalAmount: "850000",
+      status: "Approved",
+      createdAt: "2024-03-01T09:00:00Z"
+    },
+    {
+      id: "Q002",
+      clientId: "CL002", 
+      totalAmount: "1200000",
+      status: "Pending",
+      createdAt: "2024-03-15T11:00:00Z"
+    }
+  ]);
+
+  const [invoices] = useState([
+    {
+      id: "INV001",
+      clientId: "CL001",
+      amount: "850000",
+      status: "Paid",
+      dueDate: "2024-03-30"
+    }
+  ]);
+
+  const [requisitions] = useState([
+    {
+      id: "REQ001",
+      requester: "John Doe",
+      amount: "25000",
+      status: "Pending Approval"
+    }
+  ]);
+
+  const [inventory] = useState([
+    {
+      id: "ITM001",
+      name: "X-Ray Machine",
+      stock: 5,
+      reorderLevel: 2
+    }
+  ]);
+
+  const handleClientCreate = (client: any) => {
+    setClients(prev => [...prev, client]);
+  };
+
+  const handleClientUpdate = (updatedClient: any) => {
+    setClients(prev => prev.map(c => c.id === updatedClient.id ? updatedClient : c));
+  };
+
+  const renderContent = () => {
+    switch (activeSection) {
+      case "crm":
+        return (
+          <CRMDashboard
+            clients={clients}
+            quotations={quotations}
+            onClientCreate={handleClientCreate}
+            onClientUpdate={handleClientUpdate}
+          />
+        );
+      case "dashboard":
+        return (
+          <MainDashboard 
+            userRole={userRole}
+            clients={clients}
+            quotations={quotations}
+            invoices={invoices}
+            requisitions={requisitions}
+            inventory={inventory}
+          />
+        );
+      default:
+        return (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-foreground mb-2">{activeSection.charAt(0).toUpperCase() + activeSection.slice(1)} Module</h2>
+              <p className="text-muted-foreground">This module is planned for future implementation</p>
+            </div>
+            <Card>
+              <CardContent className="p-6">
+                <p className="text-center text-muted-foreground">Module coming soon...</p>
+              </CardContent>
+            </Card>
+          </div>
+        );
+    }
+  };
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground mb-2">Morab Flow ERP System</h1>
-          <p className="text-muted-foreground">Medical Equipment Sales & Assembly Management</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">CRM Module</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Ready</div>
-              <p className="text-xs text-muted-foreground">Client management system</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Sales Module</CardTitle>
-              <FileText className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Active</div>
-              <p className="text-xs text-muted-foreground">Quotations & invoices</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Inventory</CardTitle>
-              <Package className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Planned</div>
-              <p className="text-xs text-muted-foreground">Stock & dispatch tracking</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Requisitions</CardTitle>
-              <ClipboardList className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Planned</div>
-              <p className="text-xs text-muted-foreground">Approval workflow system</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Finance</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Active</div>
-              <p className="text-xs text-muted-foreground">Payment processing</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Reports</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">Planned</div>
-              <p className="text-xs text-muted-foreground">Analytics dashboard</p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>🎉 ERP System Design Complete!</CardTitle>
-            <CardDescription>
-              Your comprehensive multi-departmental ERP system architecture has been designed
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <h4 className="font-semibold text-primary mb-2">✅ Completed Components:</h4>
-                <ul className="text-sm space-y-1">
-                  <li>• Enhanced Sidebar with role-based navigation</li>
-                  <li>• CRM Dashboard with client management</li>
-                  <li>• Client Forms with validation</li>
-                  <li>• Main Dashboard with executive overview</li>
-                  <li>• Google Sheets integration foundation</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold text-secondary mb-2">🏗️ Architecture Designed:</h4>
-                <ul className="text-sm space-y-1">
-                  <li>• Complete Requisitions workflow</li>
-                  <li>• Advanced Inventory & Dispatch system</li>
-                  <li>• Enhanced Sales with client integration</li>
-                  <li>• Executive Reports dashboard</li>
-                  <li>• Role-based access control</li>
-                </ul>
-              </div>
+    <div className="min-h-screen bg-background flex">
+      <Sidebar 
+        activeSection={activeSection}
+        onSectionChange={setActiveSection}
+        userRole={userRole}
+      />
+      <div className="flex-1 p-6">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-foreground mb-2">Morab Flow ERP System</h1>
+              <p className="text-muted-foreground">Medical Equipment Sales & Assembly Management</p>
             </div>
-            
-            <div className="bg-muted p-4 rounded-lg">
-              <h4 className="font-semibold mb-2">🎯 Next Steps:</h4>
-              <p className="text-sm text-muted-foreground">
-                The ERP foundation is ready! You can now incrementally build each module 
-                (Requisitions, Inventory, Reports) using the established patterns and 
-                Google Sheets integration. Each component follows the same structure 
-                for consistency and maintainability.
-              </p>
+            <div className="flex items-center space-x-4">
+              <select 
+                value={userRole} 
+                onChange={(e) => setUserRole(e.target.value)}
+                className="px-3 py-2 border border-border rounded-md bg-background text-foreground"
+              >
+                <option value="admin">Admin</option>
+                <option value="sales">Sales Rep</option>
+                <option value="gm">General Manager</option>
+                <option value="inventory">Inventory Manager</option>
+                <option value="finance">Finance</option>
+              </select>
             </div>
-          </CardContent>
-        </Card>
+          </div>
+          
+          {renderContent()}
+        </div>
       </div>
     </div>
   );
